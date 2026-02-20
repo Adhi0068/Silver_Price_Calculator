@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silver Price Calculator</title>
+
+    <style>
+
+        /* ================= PURPLE MODE (DEFAULT) ================= */
+        :root {
+            --bg: linear-gradient(135deg,#1e293b,#334155);
+            --card: rgba(255,255,255,0.08);
+            --panel: rgba(255,255,255,0.06);
+            --text: #ffffff;
+            --muted: #cbd5e1;
+            --border: rgba(255,255,255,0.12);
+            --pill-bg: rgba(255,255,255,0.12);
+
+            --btn-gradient: linear-gradient(135deg,#6366f1,#8b5cf6);
+            --btn-hover: linear-gradient(135deg,#4f46e5,#7c3aed);
+        }
+
+        /* ================= DARK MODE ================= */
+        body.dark {
+            --bg: #0f1115;
+            --card: rgba(255,255,255,0.06);
+            --panel: rgba(255,255,255,0.05);
+            --text: #ffffff;
+            --muted: #9ca3af;
+            --border: rgba(255,255,255,0.08);
+            --pill-bg: rgba(255,255,255,0.10);
+
+            --btn-gradient: linear-gradient(135deg,#3b82f6,#6366f1);
+            --btn-hover: linear-gradient(135deg,#2563eb,#4f46e5);
+        }
+
+        /* ================= LIGHT MODE ================= */
+        body.light {
+            --bg: linear-gradient(135deg,#f5f7fb,#e9edf5);
+            --card: rgba(255,255,255,0.92);
+            --panel: rgba(255,255,255,0.8);
+            --text: #111827;
+            --muted: #4b5563;
+            --border: rgba(0,0,0,0.08);
+            --pill-bg: rgba(0,0,0,0.06);
+
+            --btn-gradient: linear-gradient(135deg,#7c3aed,#9333ea);
+            --btn-hover: linear-gradient(135deg,#6d28d9,#7e22ce);
+        }
+
+        /* ================= BODY ================= */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.4s ease;
+        }
+
+        /* ================= CARD ================= */
+        .card {
+            width: 460px;
+            padding: 30px;
+            border-radius: 22px;
+            backdrop-filter: blur(20px);
+            background: var(--card);
+            border: 1px solid var(--border);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+        }
+
+        /* ================= HEADER ================= */
+        .header {
+            text-align: center;
+            position: relative;
+            margin-bottom: 26px;
+        }
+
+        .header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        /* ================= SWITCH ================= */
+        .mode-switch {
+            position: absolute;
+            right: 0;
+            top: 6px;
+            width: 50px;
+            height: 22px;
+            border-radius: 20px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            cursor: pointer;
+        }
+
+        .mode-switch::before {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 2.5px;
+            left: 3px;
+            border-radius: 50%;
+            background: var(--btn-gradient);
+            transition: 0.3s ease;
+        }
+
+        body.dark .mode-switch::before { transform: translateX(26px); }
+        body.light .mode-switch::before { transform: translateX(13px); }
+
+        /* ================= CURRENT PRICE ================= */
+        .current-price-box {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .current-price-box .label {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .current-price-box .price {
+            font-size: 32px;
+            font-weight: 700;
+            margin-top: 6px;
+            transition: 0.3s ease;
+        }
+
+        .price.pulse {
+            animation: pulse 0.6s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.07); }
+            100% { transform: scale(1); }
+        }
+
+        /* ================= UPDATED PILL ================= */
+        .tag {
+            margin-top: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 18px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            background: var(--pill-bg);
+            transition: 0.3s ease;
+        }
+
+        .tag.glow {
+            box-shadow: 0 0 0 3px rgba(139,92,246,0.25);
+        }
+
+        .tag svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ================= FORM ================= */
+        label {
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 18px;
+            display: block;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        input {
+            flex: 2;
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--panel);
+            color: var(--text);
+            outline: none;
+            transition: 0.2s ease;
+        }
+
+        input:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 2px rgba(139,92,246,0.2);
+        }
+
+        button {
+            flex: 1;
+            border-radius: 14px;
+            border: none;
+            background: var(--btn-gradient);
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            background: var(--btn-hover);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] { -moz-appearance:textfield; }
+
+        .result {
+            margin-top: 24px;
+            padding: 18px;
+            border-radius: 18px;
+            background: var(--panel);
+            display: none;
+        }
+
+        .breakdown-row {
+            display:flex;
+            justify-content:space-between;
+            font-size:14px;
+            margin-top:6px;
+        }
+
+        .summary {
+            margin-top:16px;
+            padding-top:14px;
+            border-top:1px solid var(--border);
+            text-align:center;
+        }
+
+        .summary .amount {
+            font-size:24px;
+            font-weight:700;
+            margin-top:6px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <div class="header">
+        <h2>Silver Price Calculator</h2>
+        <div class="mode-switch" onclick="toggleTheme()"></div>
+    </div>
+
+    <div class="current-price-box">
+        <div class="label">Current Silver Price</div>
+        <div class="price" id="currentPriceText">₹ -- / gram</div>
+
+        <div class="tag" id="lastUpdatedTag" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span id="updatedText"></span>
+        </div>
+    </div>
+
+    <label>Update Silver Price</label>
+    <div class="row">
+        <input id="silverPrice" type="number" min="0" step="0.01"
+               oninput="sanitizeInput(this)">
+        <button onclick="updatePrice()">Update</button>
+    </div>
+
+    <label>Weight (grams)</label>
+    <div class="row">
+        <input id="weight" type="number" min="0" step="0.01"
+               oninput="sanitizeInput(this); autoCalculate()">
+        <button onclick="calculate()">Calculate</button>
+    </div>
+
+    <div class="result" id="result">
+        <div id="totalText"></div>
+        <div class="breakdown-row">
+            <span>Base Silver Price</span>
+            <span>₹ <span id="basePrice"></span></span>
+        </div>
+        <div class="breakdown-row">
+            <span>Making Charges</span>
+            <span>₹ <span id="makingCharge"></span></span>
+        </div>
+        <div class="summary">
+            FINAL PAYABLE AMOUNT
+            <div class="amount">₹ <span id="finalAmount"></span></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const API="http://localhost:8080/api/v1";
+    const modes=["purple","dark","light"];
+    let modeIndex=0;
+
+    /* ================= THEME ================= */
+    function applyTheme(mode){
+        document.body.classList.remove("dark","light");
+        if(mode==="dark") document.body.classList.add("dark");
+        if(mode==="light") document.body.classList.add("light");
+        localStorage.setItem("theme",mode);
+    }
+
+    function loadTheme(){
+        const saved=localStorage.getItem("theme")||"purple";
+        modeIndex=modes.indexOf(saved);
+        if(modeIndex===-1) modeIndex=0;
+        applyTheme(saved);
+    }
+    loadTheme();
+
+    function toggleTheme(){
+        modeIndex=(modeIndex+1)%modes.length;
+        applyTheme(modes[modeIndex]);
+    }
+
+    /* ================= INPUT CLEAN ================= */
+    function sanitizeInput(input){
+        if(input.value<0) input.value="";
+    }
+
+    /* ================= LOAD PRICE ================= */
+    function loadPrice(){
+        fetch(API+"/currentprice")
+        .then(r=>r.json())
+        .then(data=>{
+            if(data.price>0){
+                currentPriceText.innerText="₹ "+data.price+" / gram";
+            }
+
+            if(data.lastUpdated){
+                const d=new Date(data.lastUpdated);
+                updatedText.innerText =
+                    "Updated on "+
+                    d.toLocaleDateString("en-IN")+" at "+
+                    d.toLocaleTimeString("en-IN",{hour:'2-digit',minute:'2-digit'});
+                lastUpdatedTag.style.display="inline-flex";
+            }
+        });
+    }
+    loadPrice();
+
+    /* ================= UPDATE PRICE ================= */
+    function updatePrice(){
+        const price=silverPrice.value;
+        if(!price||price<=0)return;
+
+        fetch(API+"/setprice?price="+price,{method:"POST"})
+        .then(()=>{
+            loadPrice();
+            silverPrice.value="";
+
+            const priceEl=document.getElementById("currentPriceText");
+            priceEl.classList.add("pulse");
+            setTimeout(()=>priceEl.classList.remove("pulse"),600);
+
+            const tag=document.getElementById("lastUpdatedTag");
+            tag.classList.add("glow");
+            setTimeout(()=>tag.classList.remove("glow"),1500);
+        });
+    }
+
+    /* ================= AUTO CALC ================= */
+    function autoCalculate(){
+        if(!weight.value||weight.value<=0){
+            result.style.display="none";
+            return;
+        }
+        calculate();
+    }
+
+    /* ================= CALCULATION WITH RANGE ================= */
+    function calculate(){
+
+        const w=parseFloat(weight.value);
+        if(!w||w<=0)return;
+
+        const pricePerGram=parseFloat(
+            currentPriceText.innerText.replace(/[^\d.]/g,"")
+        );
+
+        if(!pricePerGram)return;
+
+        const base = (pricePerGram * w);
+
+        // -------- RANGE LOGIC FOR 10–29 --------
+        if(w >= 10 && w <= 29){
+
+            const minMaking = 500;
+            const maxMaking = 600;
+
+            const minTotal = base + minMaking;
+            const maxTotal = base + maxMaking;
+
+            result.style.display="block";
+
+            totalText.innerText =
+                "Total Price: ₹ " +
+                minTotal.toFixed(2) +
+                " – ₹ " +
+                maxTotal.toFixed(2);
+
+            basePrice.innerText = base.toFixed(2);
+
+            makingCharge.innerText =
+                minMaking + " – " + maxMaking;
+
+            finalAmount.innerText =
+                minTotal.toFixed(2) +
+                " – " +
+                maxTotal.toFixed(2);
+
+            return;
+        }
+
+        // -------- NORMAL LOGIC --------
+        fetch(API+"/calculate?weight="+w)
+        .then(r=>r.text())
+        .then(total=>{
+
+            const totalNum=parseFloat(total);
+            const making = totalNum - base;
+
+            result.style.display="block";
+
+            totalText.innerText="Total Price: ₹ "+totalNum.toFixed(2);
+            basePrice.innerText=base.toFixed(2);
+            makingCharge.innerText=making.toFixed(2);
+            finalAmount.innerText=totalNum.toFixed(2);
+        });
+    }
+</script>
+
+</body>
+</html>
