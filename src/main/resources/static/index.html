@@ -2,253 +2,331 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Silver Price Calculator</title>
 
     <style>
 
-        /* ================= PURPLE MODE (DEFAULT) ================= */
-        :root {
-            --bg: linear-gradient(135deg,#1e293b,#334155);
-            --card: rgba(255,255,255,0.08);
-            --panel: rgba(255,255,255,0.06);
+        /* ================= THEME ================= */
+         :root {
+          --bg: radial-gradient(circle at 25% 25%, rgba(255,255,255,0.06) 0%, transparent 45%),
+      radial-gradient(circle at 75% 75%, rgba(255,255,255,0.04) 0%, transparent 45%),
+      linear-gradient(135deg,#2f3a46,#0f172a);
+            --card: rgba(255,255,255,0.06);
+            --panel: rgba(255,255,255,0.04);
+            --border: rgba(255,255,255,0.10);
             --text: #ffffff;
-            --muted: #cbd5e1;
-            --border: rgba(255,255,255,0.12);
             --pill-bg: rgba(255,255,255,0.12);
+            --btn-gradient: linear-gradient(135deg,#8b5cf6,#6366f1);
+            --btn-hover: linear-gradient(135deg,#7c3aed,#4f46e5);
+            --accent-glow: #8b5cf6;
+        }
 
+        body.dark {
+            --bg: linear-gradient(135deg,#000000,#050505);
+            --card: rgba(255,255,255,0.04);
+            --panel: rgba(255,255,255,0.03);
+            --border: rgba(255,255,255,0.08);
+            --text: #e5e7eb;
+            --pill-bg: rgba(255,255,255,0.08);
+            --btn-gradient: linear-gradient(135deg,#3b82f6,#2563eb);
+            --btn-hover: linear-gradient(135deg,#2563eb,#1d4ed8);
+            --accent-glow: rgba(59,130,246,0.6);
+        }
+
+      body.light {
+            --bg: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.35) 0%, transparent 45%),
+              radial-gradient(circle at 80% 80%, rgba(255,255,255,0.15) 0%, transparent 50%),
+              linear-gradient(135deg,#c7c9cc,#9ea3a8);
+            --card: rgba(255,255,255,0.18);
+            --panel: rgba(255,255,255,0.22);
+            --text: #1e293b;
+            --border: rgba(255,255,255,0.5);
+            --pill-bg: rgba(255,255,255,0.35);
             --btn-gradient: linear-gradient(135deg,#6366f1,#8b5cf6);
             --btn-hover: linear-gradient(135deg,#4f46e5,#7c3aed);
-        }
-
-        /* ================= DARK MODE ================= */
-        body.dark {
-            --bg: #0f1115;
-            --card: rgba(255,255,255,0.06);
-            --panel: rgba(255,255,255,0.05);
-            --text: #ffffff;
-            --muted: #9ca3af;
-            --border: rgba(255,255,255,0.08);
-            --pill-bg: rgba(255,255,255,0.10);
-
-            --btn-gradient: linear-gradient(135deg,#3b82f6,#6366f1);
-            --btn-hover: linear-gradient(135deg,#2563eb,#4f46e5);
-        }
-
-        /* ================= LIGHT MODE ================= */
-        body.light {
-            --bg: linear-gradient(135deg,#f5f7fb,#e9edf5);
-            --card: rgba(255,255,255,0.92);
-            --panel: rgba(255,255,255,0.8);
-            --text: #111827;
-            --muted: #4b5563;
-            --border: rgba(0,0,0,0.08);
-            --pill-bg: rgba(0,0,0,0.06);
-
-            --btn-gradient: linear-gradient(135deg,#7c3aed,#9333ea);
-            --btn-hover: linear-gradient(135deg,#6d28d9,#7e22ce);
+            --accent-glow: rgba(139,92,246,0.55);
         }
 
         /* ================= BODY ================= */
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: 0.4s ease;
+        html,body{height:100%}
+
+        body{
+            margin:0;
+            font-family:'Segoe UI',sans-serif;
+            background:var(--bg);
+            color:var(--text);
+
+            display:flex;
+            justify-content:center;
+            align-items:flex-start;
+
+            padding:
+                calc(env(safe-area-inset-top) + 24px)
+                16px
+                calc(env(safe-area-inset-bottom) + 90px)
+                16px;
+
+            box-sizing:border-box;
         }
 
-        /* ================= CARD ================= */
-        .card {
-            width: 460px;
-            padding: 30px;
-            border-radius: 22px;
-            backdrop-filter: blur(20px);
-            background: var(--card);
-            border: 1px solid var(--border);
-            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+        .wrapper{
+            width:100%;
+            max-width:480px;
         }
 
-        /* ================= HEADER ================= */
-        .header {
-            text-align: center;
+        /* ================= TITLE CARD ================= */
+        .top-bar{
+            padding:18px 20px;
+            border-radius:24px;
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            background: linear-gradient(
+                145deg,
+                rgba(255,255,255,0.35),
+                rgba(255,255,255,0.15)
+            );
+            border: 1px solid rgba(255,255,255,0.4);
+            box-shadow:
+                0 8px 20px rgba(0,0,0,0.12),
+                inset 0 1px 1px rgba(255,255,255,0.3);
+        }
+
+        .top-bar h2{
+            margin:0;
+            font-size:20px;
+            font-weight:700;
+        }
+        .title-wrapper{
+            text-align:center;
+        }
+
+        .title-wrapper h2{
+            margin:0;
+            font-size:20px;
+            font-weight:700;
+        }
+
+        .subtitle{
+            margin-top:4px;
+            font-size:13px;
+            opacity:0.7;
+            font-weight:500;
+        }
+
+        .mode-switch{
+            position:absolute;
+            right:18px;
+            top:50%;
+            transform:translateY(-50%);
+            width:40px;     /* smaller */
+            height:22px;    /* smaller */
+            border-radius:20px;
+            background:var(--panel);
+            border:1px solid var(--border);
+            cursor:pointer;
+        }
+
+        .mode-switch::after{
+            content:"";
+            position:absolute;
+            width:14px;
+            height:14px;
+            border-radius:50%;
+            background:var(--btn-gradient);
+            top:3px;
+            left:5px;
+            transition:.3s ease;
+        }
+
+        body.dark .mode-switch::after{ transform:translateX(16px); }
+        body.light .mode-switch::after{ transform:translateX(8px); }
+
+        /* ================= MAIN CARD ================= */
+        .card{
             position: relative;
-            margin-bottom: 26px;
+            overflow: hidden;
+            margin-top:22px;
+            padding:32px;
+            border-radius:28px;
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            background: linear-gradient(
+                145deg,
+                rgba(255,255,255,0.35),
+                rgba(255,255,255,0.15)
+            );
+            border: 1px solid rgba(255,255,255,0.4);
+            box-shadow:
+                0 10px 30px rgba(0,0,0,0.15),
+                inset 0 1px 1px rgba(255,255,255,0.6);
         }
 
-        .header h2 {
-            font-size: 28px;
-            font-weight: 700;
-            margin: 0;
+        body.light .card,
+        body.light .top-bar{
+            backdrop-filter: blur(30px);
+        }
+       body.light .row input{
+             background: rgba(255,255,255,0.03);
+            color: #1f2937;
         }
 
-        /* ================= SWITCH ================= */
-        .mode-switch {
-            position: absolute;
-            right: 0;
-            top: 6px;
-            width: 50px;
-            height: 22px;
-            border-radius: 20px;
-            background: var(--panel);
-            border: 1px solid var(--border);
-            cursor: pointer;
+       body.light .card::before,
+            body.light .top-bar::before{
+                content:"";
+                position:absolute;
+                inset:0;
+                border-radius:inherit;
+                background: radial-gradient(
+                    circle at 30% 10%,
+                    rgba(255,255,255,0.18) 0%,
+                    rgba(255,255,255,0.08) 30%,
+                    transparent 60%
+                );
+                pointer-events:none;
+            }
+
+        /* ================= PRICE ================= */
+        .current-price-box{
+            text-align:center;
+            margin-bottom:28px;
         }
 
-        .mode-switch::before {
-            content: "";
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            top: 2.5px;
-            left: 3px;
-            border-radius: 50%;
-            background: var(--btn-gradient);
-            transition: 0.3s ease;
+        .current-price-box .label{
+            font-size:15px;
+            opacity:.8;
         }
 
-        body.dark .mode-switch::before { transform: translateX(26px); }
-        body.light .mode-switch::before { transform: translateX(13px); }
-
-        /* ================= CURRENT PRICE ================= */
-        .current-price-box {
-            text-align: center;
-            margin-bottom: 28px;
+        .current-price-box .price{
+            font-size:36px;
+            font-weight:800;
+            margin-top:10px;
+            transition:.3s ease;
         }
 
-        .current-price-box .label {
-            font-size: 14px;
-            opacity: 0.7;
+        .price.pulse{
+            transform:scale(1.06);
         }
 
-        .current-price-box .price {
-            font-size: 32px;
-            font-weight: 700;
-            margin-top: 6px;
-            transition: 0.3s ease;
+        .tag{
+            margin-top:14px;
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:8px 16px;
+            border-radius:999px;
+            font-size:13px;
+            background:var(--pill-bg);
+            border:1px solid var(--border);
+            transition:.3s ease;
         }
 
-        .price.pulse {
-            animation: pulse 0.6s ease;
+        .tag svg{
+            width:14px;
+            height:14px;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.07); }
-            100% { transform: scale(1); }
-        }
-
-        /* ================= UPDATED PILL ================= */
-        .tag {
-            margin-top: 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 9px 18px;
-            border-radius: 999px;
-            font-size: 14px;
-            font-weight: 500;
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            background: var(--pill-bg);
-            transition: 0.3s ease;
-        }
-
-        .tag.glow {
-            box-shadow: 0 0 0 3px rgba(139,92,246,0.25);
-        }
-
-        .tag svg {
-            width: 16px;
-            height: 16px;
+        .tag.glow{
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
 
         /* ================= FORM ================= */
-        label {
-            font-size: 14px;
+        label{
+            font-size:15px;
+            margin-top:18px;
+            display:block;
+        }
+
+        .row{
+            margin-top:8px;
+            position:relative;
+        }
+
+        .row input{
+            width:100%;
+            padding:16px 130px 16px 16px;
+            border-radius:20px;
+            border:1px solid rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.012);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            color:var(--text);
             font-weight: 500;
-            margin-top: 18px;
-            display: block;
+            font-size:16px;
+            outline:none;
+            box-sizing:border-box;
         }
 
-        .row {
-            display: flex;
-            gap: 10px;
-            margin-top: 8px;
+<!--        .row input:focus{-->
+<!--            border: 1.5px solid var(&#45;&#45;accent-glow);-->
+<!--            box-shadow:-->
+<!--                0 0 0 2px color-mix(in srgb, var(&#45;&#45;accent-glow) 45%, transparent);-->
+<!--        }-->
+
+<!--        .row input:focus{-->
+<!--            border: 2px solid color-mix(in srgb, var(&#45;&#45;accent-glow) 90%, black);-->
+<!--            box-shadow:-->
+<!--                0 0 0 3px color-mix(in srgb, var(&#45;&#45;accent-glow) 40%, transparent);-->
+<!--        }-->
+
+        .row input:focus{
+            border: 1px solid var(--accent-glow);
+            box-shadow:
+                0 0 0 3px color-mix(in srgb, var(--accent-glow) 35%, transparent);
         }
 
-        input {
-            flex: 2;
-            padding: 12px;
-            border-radius: 14px;
-            border: 1px solid var(--border);
-            background: var(--panel);
-            color: var(--text);
-            outline: none;
-            transition: 0.2s ease;
+        .row button{
+            position:absolute;
+            right:6px;
+            top:6px;
+            bottom:6px;
+            width:110px;
+            border:none;
+            border-radius:16px;
+            background:var(--btn-gradient);
+            color:white;
+            font-weight:600;
+            cursor:pointer;
+            transition:.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        input:focus {
-            border-color: #8b5cf6;
-            box-shadow: 0 0 0 2px rgba(139,92,246,0.2);
+        .row button:disabled{
+            opacity:.6;
+            cursor:not-allowed;
         }
 
-        button {
-            flex: 1;
-            border-radius: 14px;
-            border: none;
-            background: var(--btn-gradient);
-            color: white;
-            cursor: pointer;
-            font-weight: 500;
-            transition: 0.2s ease;
+        .row button:hover{
+            background:var(--btn-hover);
+            transform: translateY(-1px);
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            background: var(--btn-hover);
+        /* ================= RESULT ================= */
+        .result{
+            margin-top:24px;
+            padding:22px;
+            border-radius:22px;
+            background:var(--panel);
+            display:none;
         }
 
-        button:active {
-            transform: translateY(1px);
-        }
-
-        input[type=number]::-webkit-outer-spin-button,
-        input[type=number]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type=number] { -moz-appearance:textfield; }
-
-        .result {
-            margin-top: 24px;
-            padding: 18px;
-            border-radius: 18px;
-            background: var(--panel);
-            display: none;
-        }
-
-        .breakdown-row {
+        .breakdown-row{
             display:flex;
             justify-content:space-between;
-            font-size:14px;
-            margin-top:6px;
+            font-size:15px;
+            margin-top:8px;
         }
 
-        .summary {
-            margin-top:16px;
+        .summary{
+            margin-top:18px;
             padding-top:14px;
             border-top:1px solid var(--border);
             text-align:center;
         }
 
-        .summary .amount {
+        .summary .amount{
             font-size:24px;
-            font-weight:700;
+            font-weight:800;
             margin-top:6px;
         }
 
@@ -257,64 +335,78 @@
 
 <body>
 
-<div class="card">
+<div class="wrapper">
 
-    <div class="header">
-        <h2>Silver Price Calculator</h2>
+    <div class="top-bar">
+        <div class="title-wrapper">
+            <h2>Silver Price Calculator  </h2>
+            <!--            <div class="subtitle">Calculator</div>-->
+        </div>
         <div class="mode-switch" onclick="toggleTheme()"></div>
     </div>
 
-    <div class="current-price-box">
-        <div class="label">Current Silver Price</div>
-        <div class="price" id="currentPriceText">₹ -- / gram</div>
+    <div class="card">
 
-        <div class="tag" id="lastUpdatedTag" style="display:none">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            <span id="updatedText"></span>
+        <div class="current-price-box">
+            <div class="label">Currently Set Silver Price</div>
+            <div class="price" id="currentPriceText">₹ -- / gram</div>
+
+            <div class="tag" id="lastUpdatedTag" style="display:none">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 8v4l3 3"/>
+                    <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <span id="updatedText"></span>
+            </div>
         </div>
-    </div>
 
-    <label>Update Silver Price</label>
-    <div class="row">
-        <input id="silverPrice" type="number" min="0" step="0.01"
-               oninput="sanitizeInput(this)">
-        <button onclick="updatePrice()">Update</button>
-    </div>
-
-    <label>Weight (grams)</label>
-    <div class="row">
-        <input id="weight" type="number" min="0" step="0.01"
-               oninput="sanitizeInput(this); autoCalculate()">
-        <button onclick="calculate()">Calculate</button>
-    </div>
-
-    <div class="result" id="result">
-        <div id="totalText"></div>
-        <div class="breakdown-row">
-            <span>Base Silver Price</span>
-            <span>₹ <span id="basePrice"></span></span>
+        <label>Update Silver Price</label>
+        <div class="row">
+            <input id="silverPrice" type="number" min="0" step="0.01"
+                   oninput="sanitizeInput(this)">
+            <button id="updateBtn" onclick="updatePrice()">Update</button>
         </div>
-        <div class="breakdown-row">
-            <span>Making Charges</span>
-            <span>₹ <span id="makingCharge"></span></span>
-        </div>
-        <div class="summary">
-            FINAL PAYABLE AMOUNT
-            <div class="amount">₹ <span id="finalAmount"></span></div>
-        </div>
-    </div>
 
+        <label>Weight (grams)</label>
+        <div class="row">
+            <input id="weight" type="number" min="0" step="0.01"
+                   oninput="sanitizeInput(this); autoCalculate()">
+            <button onclick="calculate()">Calculate</button>
+        </div>
+
+        <div class="result" id="result">
+            <div id="totalText"></div>
+            <div class="breakdown-row">
+                <span>Base Silver Price</span>
+                <span>₹ <span id="basePrice"></span></span>
+            </div>
+            <div class="breakdown-row">
+                <span>Making Charges</span>
+                <span>₹ <span id="makingCharge"></span></span>
+            </div>
+            <div class="summary">
+                FINAL PAYABLE AMOUNT
+                <div class="amount">₹ <span id="finalAmount"></span></div>
+            </div>
+        </div>
+
+    </div>
 </div>
 
 <script>
+
     const API="/api/v1";
     const modes=["purple","dark","light"];
     let modeIndex=0;
 
-    /* ================= THEME ================= */
+    function formatINR(num){
+        const value = Number(num);
+        return new Intl.NumberFormat("en-IN", {
+            minimumFractionDigits: value % 1 !== 0 ? 2 : 0,
+            maximumFractionDigits: 2
+        }).format(value);
+    }
+
     function applyTheme(mode){
         document.body.classList.remove("dark","light");
         if(mode==="dark") document.body.classList.add("dark");
@@ -335,20 +427,17 @@
         applyTheme(modes[modeIndex]);
     }
 
-    /* ================= INPUT CLEAN ================= */
     function sanitizeInput(input){
         if(input.value<0) input.value="";
     }
 
-    /* ================= LOAD PRICE ================= */
     function loadPrice(){
         fetch(API+"/currentprice")
         .then(r=>r.json())
         .then(data=>{
             if(data.price>0){
-                currentPriceText.innerText="₹ "+data.price+" / gram";
+                currentPriceText.innerText="₹ "+formatINR(data.price)+" / gram";
             }
-
             if(data.lastUpdated){
                 const d=new Date(data.lastUpdated);
                 updatedText.innerText =
@@ -361,27 +450,30 @@
     }
     loadPrice();
 
-    /* ================= UPDATE PRICE ================= */
+    /* smoother update */
     function updatePrice(){
         const price=silverPrice.value;
         if(!price||price<=0)return;
+
+        updateBtn.disabled=true;
 
         fetch(API+"/setprice?price="+price,{method:"POST"})
         .then(()=>{
             loadPrice();
             silverPrice.value="";
-
-            const priceEl=document.getElementById("currentPriceText");
-            priceEl.classList.add("pulse");
-            setTimeout(()=>priceEl.classList.remove("pulse"),600);
-
-            const tag=document.getElementById("lastUpdatedTag");
-            tag.classList.add("glow");
-            setTimeout(()=>tag.classList.remove("glow"),1500);
+            currentPriceText.classList.add("pulse");
+            lastUpdatedTag.classList.add("glow");
+            setTimeout(()=>{
+                currentPriceText.classList.remove("pulse");
+                lastUpdatedTag.classList.remove("glow");
+                updateBtn.disabled=false;
+            },800);
+        })
+        .catch(()=>{
+            updateBtn.disabled=false;
         });
     }
 
-    /* ================= AUTO CALC ================= */
     function autoCalculate(){
         if(!weight.value||weight.value<=0){
             result.style.display="none";
@@ -390,7 +482,7 @@
         calculate();
     }
 
-    /* ================= CALCULATION WITH RANGE ================= */
+
     function calculate(){
 
         const w=parseFloat(weight.value);
@@ -399,12 +491,14 @@
         const pricePerGram=parseFloat(
             currentPriceText.innerText.replace(/[^\d.]/g,"")
         );
-
         if(!pricePerGram)return;
 
         const base = (pricePerGram * w);
 
-        // -------- RANGE LOGIC FOR 10–29 --------
+        result.style.display="block";
+        result.scrollIntoView({ behavior: "smooth", block: "center" });
+
+        /* ===== RANGE LOGIC 10–29 ===== */
         if(w >= 10 && w <= 29){
 
             const minMaking = 500;
@@ -413,28 +507,20 @@
             const minTotal = base + minMaking;
             const maxTotal = base + maxMaking;
 
-            result.style.display="block";
+            totalText.innerText = "Breakdown";
 
-            totalText.innerText =
-                "Total Price: ₹ " +
-                minTotal.toFixed(2) +
-                " – ₹ " +
-                maxTotal.toFixed(2);
-
-            basePrice.innerText = base.toFixed(2);
+            basePrice.innerText = formatINR(base);
 
             makingCharge.innerText =
-                minMaking + " – " + maxMaking;
+                formatINR(minMaking) + " – " + formatINR(maxMaking);
 
             finalAmount.innerText =
-                minTotal.toFixed(2) +
-                " – " +
-                maxTotal.toFixed(2);
+                formatINR(minTotal) + " – " + formatINR(maxTotal);
 
             return;
         }
 
-        // -------- NORMAL LOGIC --------
+        /* ===== NORMAL BACKEND LOGIC ===== */
         fetch(API+"/calculate?weight="+w)
         .then(r=>r.text())
         .then(total=>{
@@ -442,14 +528,14 @@
             const totalNum=parseFloat(total);
             const making = totalNum - base;
 
-            result.style.display="block";
+            totalText.innerText = "Breakdown";
 
-            totalText.innerText="Total Price: ₹ "+totalNum.toFixed(2);
-            basePrice.innerText=base.toFixed(2);
-            makingCharge.innerText=making.toFixed(2);
-            finalAmount.innerText=totalNum.toFixed(2);
+            basePrice.innerText = formatINR(base);
+            makingCharge.innerText = formatINR(making);
+            finalAmount.innerText = formatINR(totalNum);
         });
     }
+
 </script>
 
 </body>
