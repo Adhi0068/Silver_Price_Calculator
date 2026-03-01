@@ -489,6 +489,9 @@
       const w=parseFloat(weight.value);
       if(!w||w<=0)return;
 
+      /* invalidate older backend requests */
+      lastRequestId++;
+
       const pricePerGram=parseFloat(
           currentPriceText.innerText.replace(/[^\d.]/g,"")
       );
@@ -522,7 +525,7 @@
       }
 
       /* ===== NORMAL BACKEND LOGIC ===== */
-      const requestId = ++lastRequestId;
+      const requestId = lastRequestId;
 
       fetch(API+"/calculate?weight="+w)
       .then(r=>r.text())
@@ -539,7 +542,7 @@
           makingCharge.innerText = formatINR(making);
           finalAmount.innerText = formatINR(totalNum);
       });
-  }
+}
 </script>
 
 </body>
